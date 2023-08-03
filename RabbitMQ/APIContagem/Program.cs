@@ -9,22 +9,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddOpenTelemetryTracing(traceProvider =>
-{
-    traceProvider
-        .AddSource(OpenTelemetryExtensions.ServiceName)
-        .SetResourceBuilder(
-            ResourceBuilder.CreateDefault()
-                .AddService(serviceName: OpenTelemetryExtensions.ServiceName,
-                    serviceVersion: OpenTelemetryExtensions.ServiceVersion))
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation()
-        .AddJaegerExporter(exporter =>
-        {
-            exporter.AgentHost = builder.Configuration["Jaeger:AgentHost"];
-            exporter.AgentPort = Convert.ToInt32(builder.Configuration["Jaeger:AgentPort"]);
-        });
-});
+builder.Services.AddOpenTelemetry()
+    .WithTracing(builder =>
+    {
+        builder
+            .AddSource(OpenTelemetryExtensions.ServiceName)
+            .SetResourceBuilder(
+                ResourceBuilder.CreateDefault()
+                    .AddService(serviceName: OpenTelemetryExtensions.ServiceName,
+                        serviceVersion: OpenTelemetryExtensions.ServiceVersion))
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddOtlpExporter(opts => opts.Endpoint = new Uri("http://localhost:4317"));
+    });
 
 builder.Services.AddScoped<MessageSender>();
 

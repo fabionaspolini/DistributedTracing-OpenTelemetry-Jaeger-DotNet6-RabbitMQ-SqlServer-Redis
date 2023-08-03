@@ -15,7 +15,7 @@ public class ContagemRepository
 
     public void Save(ResultadoContador resultado)
     {
-        using var conexao = new SqlConnection(
+        /*using var conexao = new SqlConnection(
             _configuration.GetConnectionString("BaseContagem"));
         conexao.Insert<HistoricoContagem>(new()
         {
@@ -27,6 +27,6 @@ public class ContagemRepository
             Mensagem = resultado.Mensagem,
             Kernel = resultado.Kernel,
             Framework = resultado.Framework
-        });
+        });*/
     }
 }
